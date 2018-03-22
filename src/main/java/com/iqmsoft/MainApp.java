@@ -1,30 +1,19 @@
 package com.iqmsoft;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Stream;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import reactor.core.publisher.Flux;
-import reactor.util.function.Tuple2;
 
 @SpringBootApplication
 public class MainApp {
@@ -44,36 +33,7 @@ public class MainApp {
         };
     }
     
-	@RestController
-	@RequestMapping("/stock/transaction")
-	class StockTransactionController {
-	    
-	    @Autowired
-	    StockTransactionService stockTransactionService;
-	    
-	    @GetMapping(produces = MediaType.APPLICATION_STREAM_JSON_VALUE)
-	    public Flux<StockTransaction> stockTransactionEvents() {
-	        return stockTransactionService.getStockTransactions();
-	    }
-	
-	}
-	
-	@Service
-	class StockTransactionService {
-	    Flux<StockTransaction> getStockTransactions() {
-	        Flux<Long> interval = Flux.interval(Duration.ofSeconds(1));
-	        interval.subscribe((i) -> stockList.forEach(stock -> stock.setPrice(changePrice(stock.getPrice()))));
-	        
-	        Flux<StockTransaction> stockTransactionFlux = Flux.fromStream(Stream.generate(() -> new StockTransaction(getRandomUser(), getRandomStock(), new Date())));
-	        return Flux.zip(interval, stockTransactionFlux).map(Tuple2::getT2);
-	    }
-	}
-	
-	
-	
-  
-    
-    void createRandomStock() {
+	void createRandomStock() {
         stockNames.forEach(stockName -> {
             stockList.add(new Stock(stockName, generateRandomStockPrice()));
         });
